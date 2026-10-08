@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Achievements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F5F8;--card:#fff;--ink:#14213D;--mute:#6B7690;--line:#E3E8F0;--acc:#1F4FD8;--accs:#E8EEFD;--ok:#1E9E6A;--warn:#F2A33A}
+:root[data-t=dark]{--bg:#0E1424;--card:#171F36;--ink:#E8ECF6;--mute:#8F9BB8;--line:#263050;--acc:#6C93FF;--accs:#1E2B52;--ok:#3CCB92;--warn:#F5B359}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding:16px 16px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
+h1{font-size:1.25rem;font-weight:800}
+.ib{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:1.1rem}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:16px}
+.tabs button{flex:1;padding:9px;border-radius:10px;font-weight:600;color:var(--mute)}
+.tabs button.on{background:var(--acc);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px}
+.datebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.datebar b{font-size:1.05rem}.datebar small{display:block;color:var(--mute)}
+.hero{display:flex;align-items:center;gap:20px}
+.ring{position:relative;width:104px;height:104px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:1.4rem}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.st{background:var(--bg);border-radius:12px;padding:10px 12px}
+.st b{font-size:1.4rem;font-weight:800;display:block}.st small{color:var(--mute)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.chip{flex:none;padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-size:.85rem;font-weight:600}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.form{display:grid;grid-template-columns:1fr auto auto auto;gap:8px}
+.form input,.form select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.btn{background:var(--acc);color:#fff;border-radius:10px;padding:10px 16px;font-weight:600}
+.btn.g{background:var(--accs);color:var(--acc)}
+.cat{display:flex;align-items:center;gap:8px;font-weight:700;margin:16px 0 8px}
+.dot{width:10px;height:10px;border-radius:50%}
+.task{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--card)}
+.task.done .t{text-decoration:line-through;color:var(--mute)}
+.chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:#fff;font-weight:800}
+.task.done .chk{background:var(--ok);border-color:var(--ok)}
+.t{flex:1;min-width:0;overflow-wrap:anywhere}
+.t small{display:block;color:var(--mute)}
+.mini{width:34px;height:34px;border-radius:9px;color:var(--mute)}
+.mini:hover{background:var(--bg)}
+textarea{width:100%;min-height:120px;resize:vertical}
+.empty{text-align:center;color:var(--mute);padding:24px 8px}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;font-size:.75rem;color:var(--mute)}
+.bar i{display:block;width:100%;max-width:44px;background:var(--acc);border-radius:8px 8px 0 0;min-height:4px}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.row:last-child{border:0}
+.row .pb{flex:1;height:8px;background:var(--bg);border-radius:9px;overflow:hidden}
+.row .pb i{display:block;height:100%;background:var(--ok)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9;max-width:90%}
+h2{font-size:1rem;margin-bottom:12px}
+@media(max-width:560px){.form{grid-template-columns:1fr 1fr}.form input:first-child{grid-column:1/-1}.form .btn{grid-column:1/-1}.hero{flex-direction:column;align-items:stretch}.ring{margin:0 auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Daily Achievements</h1>
+<div style="display:flex;gap:8px">
+<button class="ib" id="bell" title="Turn on notifications" aria-label="Turn on notifications">🔔</button>
+<button class="ib" id="theme" title="Dark mode" aria-label="Toggle dark mode">🌙</button>
+</div>
+</header>
+<nav class="tabs" id="tabs">
+<button data-v="today" class="on">Today</button><button data-v="stats">Stats</button><button data-v="hist">History</button>
+</nav>
+<main id="main"></main>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const key=d=>{const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())};
+const fromKey=k=>{const[a,b,c]=k.split('-');return new Date(a,b-1,c)};
+const shift=(k,n)=>{const d=fromKey(k);d.setDate(d.getDate()+n);return key(d)};
+const todayK=()=>key(new Date());
+const DEF={cats:[{n:'Health',c:'#2FA37A'},{n:'Work',c:'#3B6FD4'},{n:'Personal',c:'#A855C7'},{n:'Learning',c:'#E08A1E'}],tasks:[],done:{},notes:{},theme:'light',seq:1};
+let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem('dat')||'{}'))}catch(e){S=DEF}
+const save=()=>{try{localStorage.setItem('dat',JSON.stringify(S))}catch(e){}};
+let view='today',cur=todayK(),filter='All',editId=null;
+
+const doneSet=k=>new Set((S.done[k]||[]).filter(id=>S.tasks.some(t=>t.id===id)));
+const pct=k=>S.tasks.length?Math.round(doneSet(k).size/S.tasks.length*100):0;
+const complete=k=>S.tasks.length>0&&doneSet(k).size===S.tasks.length;
+function streak(){let k=todayK(),n=0;if(!complete(k))k=shift(k,-1);while(complete(k)&&n<3650){n++;k=shift(k,-1)}return n}
+function best(){let b=0,r=0;const keys=Object.keys(S.done).sort();if(!keys.length)return 0;let k=keys[0];const end=todayK();while(k<=end){r=complete(k)?r+1:0;b=Math.max(b,r);k=shift(k,1)}return b}
+const catColor=n=>(S.cats.find(c=>c.n===n)||{c:'#888'}).c;
+const fmtDate=k=>fromKey(k).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+const fmtTime=t=>{if(!t)return'';const[h,m]=t.split(':');const d=new Date();d.setHours(h,m);return d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})};
+
+function toast(msg){const e=document.createElement('div');e.className='toast';e.textContent=msg;document.body.appendChild(e);setTimeout(()=>e.remove(),4500)}
+
+function render(){
+ document.documentElement.dataset.t=S.theme;
+ $('#theme').textContent=S.theme==='dark'?'☀️':'🌙';
+ document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+ $('#main').innerHTML=view==='today'?today():view==='stats'?stats():hist();
+ if(view==='today')bindToday();
+ if(view==='hist')document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{cur=b.dataset.go;view='today';render()});
+}
+
+function today(){
+ const p=pct(cur),C=2*Math.PI*44,isT=cur===todayK();
+ const cats=['All',...S.cats.map(c=>c.n)];
+ if(!cats.includes(filter))filter='All';
+ const ds=doneSet(cur);
+ const groups=S.cats.filter(c=>filter==='All'||c.n===filter).map(c=>{
+  const ts=S.tasks.filter(t=>t.cat===c.n).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
+  if(!ts.length)return'';
+  return `<div class="cat"><span class="dot" style="background:${c.c}"></span>${esc(c.n)}</div>`+ts.map(t=>`
+  <div class="task ${ds.has(t.id)?'done':''}">
+   <button class="chk" data-tick="${t.id}" aria-label="Mark done">${ds.has(t.id)?'✓':''}</button>
+   <div class="t">${esc(t.title)}${t.time?`<small>🔔 ${fmtTime(t.time)}</small>`:''}</div>
+   <button class="mini" data-edit="${t.id}" aria-label="Edit">✏️</button>
+   <button class="mini" data-del="${t.id}" aria-label="Delete">🗑️</button>
+  </div>`).join('');
+ }).join('');
+ const et=S.tasks.find(t=>t.id===editId)||{};
+ return `
+ <div class="datebar">
+  <button class="ib" id="prev" aria-label="Previous day">‹</button>
+  <div style="text-align:center"><b>${isT?'Today':fmtDate(cur).split(',')[0]}</b><small>${fmtDate(cur)}</small>${isT?'':'<button class="btn g" id="gt" style="margin-top:6px;padding:4px 12px">Go to today</button>'}</div>
+  <button class="ib" id="next" aria-label="Next day" ${isT?'disabled style="opacity:.4"':''}>›</button>
+ </div>
+ <div class="card hero">
+  <div class="ring"><svg width="104" height="104"><circle cx="52" cy="52" r="44" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="52" cy="52" r="44" fill="none" stroke="var(--ok)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p/100)}"/></svg><span>${p}%</span></div>
+  <div class="stats">
+   <div class="st"><b>🔥 ${streak()}</b><small>Day streak</small></div>
+   <div class="st"><b>${ds.size}/${S.tasks.length}</b><small>Done</small></div>
+  </div>
+ </div>
+ <div class="card">
+  <h2>${editId?'Edit task':'Add a task'}</h2>
+  <div class="form">
+   <input id="ti" placeholder="e.g. Drink 8 glasses of water" maxlength="80" value="${esc(et.title||'')}">
+   <select id="ci">${S.cats.map(c=>`<option ${c.n===(et.cat||filter)?'selected':''}>${esc(c.n)}</option>`).join('')}</select>
+   <input id="tm" type="time" value="${et.time||''}" title="Reminder time">
+   <button class="btn g" id="nc" type="button">+ Category</button>
+   <button class="btn" id="add" type="button">${editId?'Save changes':'Add task'}</button>
+  </div>
+ </div>
+ <div class="chips">${cats.map(c=>`<button class="chip ${c===filter?'on':''}" data-f="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+ ${groups||`<div class="empty">No tasks yet. Add your first task above and set a reminder time.</div>`}
+ <div class="card" style="margin-top:20px">
+  <h2>Notes for this day</h2>
+  <textarea id="nt" placeholder="Write anything: wins, thoughts, lessons...">${esc(S.notes[cur]||'')}</textarea>
+ </div>`;
+}
+
+function bindToday(){
+ $('#prev').onclick=()=>{cur=shift(cur,-1);render()};
+ $('#next').onclick=()=>{if(cur<todayK()){cur=shift(cur,1);render()}};
+ if($('#gt'))$('#gt').onclick=()=>{cur=todayK();render()};
+ document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;render()});
+ document.querySelectorAll('[data-tick]').forEach(b=>b.onclick=()=>{
+  const id=+b.dataset.tick,a=S.done[cur]||[];S.done[cur]=a.includes(id)?a.filter(x=>x!==id):[...a,id];save();render();
+  if(complete(cur)&&cur===todayK())toast('🎉 All tasks done! Streak: '+streak());
+ });
+ document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(confirm('Delete this task?')){S.tasks=S.tasks.filter(t=>t.id!==+b.dataset.del);save();render()}});
+ document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editId=+b.dataset.edit;render();$('#ti').focus();scrollTo({top:0,behavior:'smooth'})});
+ $('#add').onclick=()=>{
+  const title=$('#ti').value.trim();if(!title){toast('Enter a task name first');return}
+  const o={title,cat:$('#ci').value,time:$('#tm').value};
+  if(editId){Object.assign(S.tasks.find(t=>t.id===editId),o);editId=null}
+  else S.tasks.push({id:S.seq++,...o});
+  save();render();
+ };
+ $('#ti').onkeydown=e=>{if(e.key==='Enter')$('#add').click()};
+ $('#nc').onclick=()=>{
+  const n=(prompt('New category name')||'').trim();if(!n)return;
+  if(S.cats.some(c=>c.n.toLowerCase()===n.toLowerCase())){toast('That category already exists');return}
+  const pal=['#E04F5F','#14A3C7','#8C6BDB','#D4A017','#2E8B57','#E0668C'];
+  S.cats.push({n,c:pal[S.cats.length%pal.length]});save();render();
+ };
+ $('#nt').oninput=e=>{S.notes[cur]=e.target.value;save()};
+}
+
+function stats(){
+ const t=todayK(),days=n=>Array.from({length:n},(_,i)=>shift(t,-(n-1-i)));
+ const avg=n=>{const d=days(n);return Math.round(d.reduce((a,k)=>a+pct(k),0)/n)};
+ const w=days(7);
+ const catRows=S.cats.map(c=>{const ts=S.tasks.filter(x=>x.cat===c.n);if(!ts.length)return'';
+  let tot=0,dn=0;days(30).forEach(k=>{ts.forEach(x=>{tot++;if((S.done[k]||[]).includes(x.id))dn++})});
+  const p=Math.round(dn/tot*100);
+  return `<div class="row"><span class="dot" style="background:${c.c}"></span><span style="width:90px">${esc(c.n)}</span><div class="pb"><i style="width:${p}%;background:${c.c}"></i></div><b>${p}%</b></div>`}).join('');
+ return `
+ <div class="card"><div class="stats" style="grid-template-columns:repeat(2,1fr)">
+  <div class="st"><b>${avg(7)}%</b><small>7-day completion</small></div>
+  <div class="st"><b>${avg(30)}%</b><small>30-day completion</small></div>
+  <div class="st"><b>🔥 ${streak()}</b><small>Current streak</small></div>
+  <div class="st"><b>🏆 ${best()}</b><small>Best streak</small></div>
+ </div></div>
+ <div class="card"><h2>This week</h2><div class="bars">${w.map(k=>`<div class="bar">${pct(k)}%<i style="height:${Math.max(pct(k),3)}%"></i>${fromKey(k).toLocaleDateString(undefined,{weekday:'short'})}</div>`).join('')}</div></div>
+ <div class="card"><h2>By category (last 30 days)</h2>${catRows||'<div class="empty">Add tasks to see category stats.</div>'}</div>`;
+}
+
+function hist(){
+ const t=todayK(),rows=Array.from({length:30},(_,i)=>shift(t,-i));
+ return `<div class="card"><h2>Last 30 days</h2>${S.tasks.length?rows.map(k=>{const p=pct(k);
+  return `<button class="row" data-go="${k}"><span style="width:110px;font-size:.9rem">${fromKey(k).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</span><div class="pb"><i style="width:${p}%"></i></div><b>${p}%</b>${S.notes[k]?'<span title="Has notes">📝</span>':''}</button>`}).join(''):'<div class="empty">Add tasks to start building history.</div>'}</div>`;
+}
+
+/* Notifications */
+const fired=new Set(JSON.parse(sessionStorage.getItem('fired')||'[]'));
+function notify(task){
+ const msg=task.title+' ('+task.cat+')';
+ toast('🔔 Reminder: '+msg);
+ if('Notification' in window&&Notification.permission==='granted'){try{new Notification('Time for your task',{body:msg})}catch(e){}}
+}
+function tick(){
+ const d=new Date(),z=n=>String(n).padStart(2,'0'),now=z(d.getHours())+':'+z(d.getMinutes()),k=todayK();
+ S.tasks.forEach(t=>{
+  const f=k+'|'+t.id+'|'+t.time;
+  if(t.time===now&&!fired.has(f)&&!doneSet(k).has(t.id)){fired.add(f);sessionStorage.setItem('fired',JSON.stringify([...fired]));notify(t)}
+ });
+}
+$('#bell').onclick=()=>{
+ if(!('Notification' in window)){toast('This browser does not support notifications');return}
+ if(Notification.permission==='granted'){toast('Notifications are on. Keep this page open to get reminders.');return}
+ Notification.requestPermission().then(p=>toast(p==='granted'?'Notifications enabled':'Notifications blocked. Allow them in browser settings.'));
+};
+$('#theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';save();render()};
+$('#tabs').onclick=e=>{const v=e.target.dataset.v;if(v){view=v;render()}};
+if(!localStorage.getItem('dat')&&matchMedia('(prefers-color-scheme:dark)').matches)S.theme='dark';
+setInterval(tick,15000);tick();render();
+</script>
+</body>
+</html>
